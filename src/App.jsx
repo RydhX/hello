@@ -472,12 +472,54 @@ function PortfolioChat() {
 }
 
 function IntroGateway({ isEntering, onEnter, onOpenChat }) {
+  const cardRef = useRef(null)
+
+  const handlePointerMove = (event) => {
+    if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const card = cardRef.current
+    if (!card) return
+
+    const bounds = card.getBoundingClientRect()
+    if (!bounds.width || !bounds.height) return
+
+    const x = (event.clientX - bounds.left) / bounds.width
+    const y = (event.clientY - bounds.top) / bounds.height
+    const maxTilt = 12
+
+    card.style.setProperty('--tilt-x', `${(0.5 - y) * maxTilt}deg`)
+    card.style.setProperty('--tilt-y', `${(x - 0.5) * maxTilt}deg`)
+    card.style.setProperty('--glare-x', `${x * 100}%`)
+    card.style.setProperty('--glare-y', `${y * 100}%`)
+    card.classList.add('is-tilting')
+  }
+
+  const handlePointerLeave = () => {
+    const card = cardRef.current
+    if (!card) return
+
+    card.style.setProperty('--tilt-x', '0deg')
+    card.style.setProperty('--tilt-y', '0deg')
+    card.classList.remove('is-tilting')
+  }
+
   return (
     <main className={`intro-gateway${isEntering ? ' is-entering' : ''}`}>
-      <article className="intro-profile-card">
+      <article
+        ref={cardRef}
+        className="intro-profile-card"
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
+      >
         <header className="intro-card-cover">
-          <img src={cardCover} alt="Foto sampul Ridho" />
-          <img className="intro-card-portrait" src={cardPortrait} alt="Foto profil Ridho A. Utama" />
+          <img src={cardCover} alt="Foto sampul Ridho" loading="eager" fetchPriority="high" decoding="async" />
+          <img
+            className="intro-card-portrait"
+            src={cardPortrait}
+            alt="Foto profil Ridho A. Utama"
+            loading="eager"
+            decoding="async"
+          />
           <a
             className="intro-card-linkedin"
             href="https://linkedin.com/in/ridhoalifutama/"
