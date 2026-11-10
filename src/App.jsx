@@ -245,11 +245,11 @@ function MapIllustration() {
 function ProjectVisual({ variant }) {
   const poster = variant === 'coffee'
     ? {
-        src: '/posters/blue-ocean.png',
+        src: `${import.meta.env.BASE_URL}posters/blue-ocean.png`,
         alt: 'Poster peta sebaran lokasi Blue Ocean dan analisis VIKOR',
       }
     : {
-        src: '/posters/uhi-yogyakarta.jpg',
+        src: `${import.meta.env.BASE_URL}posters/uhi-yogyakarta.jpg`,
         alt: 'Poster integrasi data LST, NDVI, dan NDBI untuk identifikasi Urban Heat Island di Yogyakarta',
       }
 
