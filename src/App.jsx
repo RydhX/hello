@@ -31,6 +31,9 @@ import './App.css'
 
 const OpportunityChart = lazy(() => import('./OpportunityChart.jsx'))
 const currentYear = new Date().getFullYear()
+const publicBase = import.meta.env.BASE_URL.endsWith('/')
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`
 const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL
   || (import.meta.env.DEV ? 'http://127.0.0.1:3000/api/chat' : '')
 const suggestedQuestions = [
@@ -245,11 +248,11 @@ function MapIllustration() {
 function ProjectVisual({ variant }) {
   const poster = variant === 'coffee'
     ? {
-        src: `${import.meta.env.BASE_URL}posters/blue-ocean.png`,
+        src: `${publicBase}posters/blue-ocean.png`,
         alt: 'Poster peta sebaran lokasi Blue Ocean dan analisis VIKOR',
       }
     : {
-        src: `${import.meta.env.BASE_URL}posters/uhi-yogyakarta.jpg`,
+        src: `${publicBase}posters/uhi-yogyakarta.jpg`,
         alt: 'Poster integrasi data LST, NDVI, dan NDBI untuk identifikasi Urban Heat Island di Yogyakarta',
       }
 
