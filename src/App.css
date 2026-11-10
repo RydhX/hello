@@ -2289,6 +2289,361 @@
   font-size: 19px !important;
 }
 
+.intro-gateway {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 24px;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 18% 18%, rgb(255 255 255 / 28%), transparent 34%),
+    radial-gradient(ellipse at 82% 78%, rgb(151 49 0 / 24%), transparent 38%),
+    linear-gradient(135deg, #ff7900, #ff6500 48%, #f05a00);
+  background-size: 400% 400%;
+  animation: intro-mesh 8s ease-in-out infinite;
+}
+
+.intro-profile-card {
+  position: relative;
+  z-index: 2;
+  width: min(340px, 100%);
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 58%);
+  border-radius: 36px;
+  background:
+    linear-gradient(155deg, rgb(255 255 255 / 42%), transparent 22%),
+    #fff;
+  box-shadow:
+    0 30px 64px -18px rgb(112 39 0 / 62%),
+    0 12px 28px -12px rgb(91 31 0 / 48%),
+    inset 0 1px 0 rgb(255 255 255 / 82%);
+  transform-style: preserve-3d;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 500ms ease;
+}
+
+.intro-profile-card:hover {
+  transform: translateY(-3px) rotateX(1deg);
+  box-shadow:
+    0 38px 76px -18px rgb(112 39 0 / 72%),
+    0 16px 34px -12px rgb(91 31 0 / 56%),
+    inset 0 1px 0 rgb(255 255 255 / 82%);
+}
+
+.intro-card-cover {
+  position: relative;
+  height: 160px;
+  margin-bottom: 0;
+}
+
+.intro-card-cover > img:first-child {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background: #e7e7e7;
+  object-fit: cover;
+  object-position: center;
+}
+
+.intro-card-portrait {
+  position: absolute;
+  bottom: -38px;
+  left: 16px;
+  width: 82px;
+  height: 82px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
+}
+
+.intro-card-linkedin {
+  position: absolute;
+  right: 12px;
+  bottom: -19px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  border: 1px solid #ededed;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 8%);
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.intro-card-linkedin:hover {
+  border-color: #cbd9ee;
+  background: #f5f8fc;
+}
+
+.intro-card-linkedin img {
+  width: 78px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.intro-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 54px 8px 8px;
+}
+
+.intro-card-identity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.intro-card-identity h1 {
+  margin: 0;
+  overflow: hidden;
+  color: #222;
+  font-size: 23px !important;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.intro-card-identity p {
+  margin: 3px 0 0;
+  color: #666;
+  font-size: 16px !important;
+  line-height: 1.4;
+}
+
+.intro-card-email {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #e4e4e4;
+  border-radius: 50%;
+  background: #fff;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.intro-card-email:hover {
+  border-color: #ccc;
+  background: #f7f7f7;
+}
+
+.intro-card-email img {
+  width: 27px;
+  height: 27px;
+}
+
+.intro-card-email > span {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 11px;
+  height: 11px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #ff5252;
+}
+
+.intro-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 14px 6px;
+  border: 1px solid #e8e8e8;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.intro-card-stats > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  color: #555;
+}
+
+.intro-card-stats > div > span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.intro-card-stats strong {
+  color: #222;
+  font-size: 16px !important;
+  font-weight: 750;
+}
+
+.intro-card-stats small {
+  color: #777;
+  font-size: 16px !important;
+}
+
+.intro-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.intro-card-enter {
+  min-width: 0;
+  min-height: 56px;
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 999px;
+  color: #fff;
+  background: #2e2e2e;
+  font-size: 17px !important;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.intro-card-enter:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #262626;
+}
+
+.intro-card-enter:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+.intro-card-chat {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #dedede;
+  border-radius: 50%;
+  color: #292929;
+  background: #fff;
+  box-shadow: 0 5px 16px rgb(128 45 0 / 12%), inset 0 1px 0 #fff;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.intro-card-chat:hover {
+  transform: translateY(-1px);
+  border-color: #bdbdbd;
+  background: #f7f7f7;
+}
+
+.intro-transition-backdrop {
+  position: fixed;
+  z-index: 3;
+  inset: 0;
+  overflow: hidden;
+  visibility: hidden;
+  perspective: 1400px;
+  pointer-events: none;
+  background: transparent;
+}
+
+.intro-transition-backdrop::before {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #ff9a3d 0%, #ff6500 52%, #d94900 100%);
+  content: "";
+  opacity: 0;
+  transition: opacity 1500ms ease;
+}
+
+.intro-gateway.is-entering .intro-transition-backdrop {
+  visibility: visible;
+}
+
+.intro-gateway.is-entering .intro-transition-backdrop::before {
+  opacity: 1;
+}
+
+.intro-gateway.is-entering .intro-profile-card {
+  transform-origin: left center;
+  animation: intro-card-flip-away 1250ms cubic-bezier(0.72, 0, 0.22, 1) 120ms both;
+}
+
+.intro-transition-door {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  width: 50.2%;
+  background:
+    linear-gradient(110deg, rgb(255 255 255 / 24%), transparent 34%),
+    linear-gradient(145deg, #ff8a24, #f05a00 78%);
+  box-shadow: 0 0 48px rgb(91 31 0 / 42%);
+  backface-visibility: hidden;
+  animation-name: none;
+  animation-duration: 1700ms;
+  animation-delay: 250ms;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.76, 0, 0.18, 1);
+}
+
+.intro-transition-door--left {
+  left: 0;
+  transform-origin: left center;
+  border-right: 1px solid rgb(255 230 205 / 65%);
+}
+
+.intro-transition-door--right {
+  right: 0;
+  transform-origin: right center;
+  border-left: 1px solid rgb(255 230 205 / 65%);
+}
+
+.intro-gateway.is-entering .intro-transition-door--left {
+  animation-name: intro-open-left-door;
+}
+
+.intro-gateway.is-entering .intro-transition-door--right {
+  animation-name: intro-open-right-door;
+}
+
+@keyframes intro-mesh {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes intro-card-flip-away {
+  from {
+    transform: perspective(1200px) rotateY(0) translateX(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: perspective(1200px) rotateY(-82deg) translateX(-72px) scale(0.86);
+    opacity: 0.12;
+    box-shadow: 28px 20px 70px rgb(112 39 0 / 72%);
+  }
+}
+
+@keyframes intro-open-left-door {
+  0% { transform: translateX(-102%) rotateY(0); }
+  26%, 42% { transform: translateX(0) rotateY(0); }
+  100% { transform: translateX(0) rotateY(-100deg); }
+}
+
+@keyframes intro-open-right-door {
+  0% { transform: translateX(102%) rotateY(0); }
+  26%, 42% { transform: translateX(0) rotateY(0); }
+  100% { transform: translateX(0) rotateY(100deg); }
+}
+
 .portfolio-chat-widget {
   position: fixed;
   z-index: 100;
@@ -2645,11 +3000,37 @@
 }
 
 @media (max-width: 560px) {
+  .intro-profile-card {
+    width: min(340px, 100%);
+    padding: 16px;
+  }
+
+  .intro-card-cover {
+    height: 150px;
+  }
+
+  .intro-card-content {
+    gap: 18px;
+    padding-top: 50px;
+  }
+
   .portfolio-chat-widget {
     right: 16px;
     bottom: 16px;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .intro-gateway {
+      animation: none;
+    }
+
+    .intro-transition-backdrop::before,
+    .intro-profile-card,
+    .intro-transition-door {
+      animation: none;
+      transition: none;
+    }
+  }
   .portfolio-chat-toggle {
     width: 58px;
     height: 58px;

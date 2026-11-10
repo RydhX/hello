@@ -1,6 +1,6 @@
 # Ridho Alif Utama — Portfolio
 
-Portofolio satu halaman berbasis React, Vite, dan Tailwind CSS, dengan visualisasi konseptual menggunakan Recharts dan ilustrasi SVG.
+Portofolio React/Vite yang dibuka dengan profile card, lalu bertransisi ke halaman CV satu halaman. Termasuk chatbot mengambang dan visualisasi konseptual dengan Recharts serta ilustrasi SVG.
 
 ## Menjalankan secara lokal
 

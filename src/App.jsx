@@ -8,7 +8,9 @@ import {
   BarChart3,
   BookOpen,
   Compass,
+  Clock3,
   ExternalLink,
+  Flag,
   Layers3,
   LoaderCircle,
   MapPin,
@@ -18,8 +20,13 @@ import {
   PenTool,
   ScanLine,
   Send,
+  Star,
   X,
 } from 'lucide-react'
+import cardCover from './assets/card/image_sampul_doci.webp'
+import cardPortrait from './assets/card/image_profil_doci.webp'
+import emailIcon from './assets/card/icon_email.svg'
+import linkedInLogo from './assets/card/logo_linkedin_logo.svg'
 import './App.css'
 
 const OpportunityChart = lazy(() => import('./OpportunityChart.jsx'))
@@ -289,6 +296,12 @@ function PortfolioChat() {
   }, [isOpen])
 
   useEffect(() => {
+    const handleOpenChat = () => setIsOpen(true)
+    document.addEventListener('portfolio-chat-open', handleOpenChat)
+    return () => document.removeEventListener('portfolio-chat-open', handleOpenChat)
+  }, [])
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     })
@@ -455,13 +468,98 @@ function PortfolioChat() {
   )
 }
 
+function IntroGateway({ isEntering, onEnter, onOpenChat }) {
+  return (
+    <main className={`intro-gateway${isEntering ? ' is-entering' : ''}`}>
+      <article className="intro-profile-card">
+        <header className="intro-card-cover">
+          <img src={cardCover} alt="Foto sampul Ridho" />
+          <img className="intro-card-portrait" src={cardPortrait} alt="Foto profil Ridho A. Utama" />
+          <a
+            className="intro-card-linkedin"
+            href="https://linkedin.com/in/ridhoalifutama/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Kunjungi LinkedIn Ridho"
+          >
+            <img src={linkedInLogo} alt="LinkedIn" />
+          </a>
+        </header>
+        <div className="intro-card-content">
+          <section className="intro-card-identity" aria-labelledby="intro-card-name">
+            <div>
+              <h1 id="intro-card-name">Ridho A. Utama</h1>
+              <p>Applied GIS</p>
+            </div>
+            <a className="intro-card-email" href="mailto:rydhxx@gmail.com" aria-label="Email Ridho">
+              <img src={emailIcon} alt="" />
+              <span aria-hidden="true" />
+            </a>
+          </section>
+          <section className="intro-card-stats" aria-label="Statistik profil">
+            <div><Star size={20} /><span><strong>4.9</strong><small>Rating</small></span></div>
+            <div><Flag size={20} /><span><strong>$10</strong><small>Hours</small></span></div>
+            <div><Clock3 size={20} /><span><strong>24h</strong><small>Weekly</small></span></div>
+          </section>
+          <div className="intro-card-actions">
+            <button type="button" className="intro-card-enter" onClick={onEnter} disabled={isEntering}>
+              {isEntering ? 'Opening portfolio…' : 'Get in Touch'}
+            </button>
+            <button
+              type="button"
+              className="intro-card-chat"
+              aria-label="Buka chatbot Ridho"
+              onClick={onOpenChat}
+            >
+              <MessageCircle size={22} />
+            </button>
+          </div>
+        </div>
+      </article>
+      <div className="intro-transition-backdrop" aria-hidden="true">
+        <div className="intro-transition-door intro-transition-door--left" />
+        <div className="intro-transition-door intro-transition-door--right" />
+      </div>
+    </main>
+  )
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hasEnteredPortfolio, setHasEnteredPortfolio] = useState(false)
+  const [isEnteringPortfolio, setIsEnteringPortfolio] = useState(false)
+  const transitionTimeoutRef = useRef(null)
 
   const closeMenu = () => setMenuOpen(false)
 
+  useEffect(() => () => window.clearTimeout(transitionTimeoutRef.current), [])
+
+  const enterPortfolio = () => {
+    if (isEnteringPortfolio) return
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setHasEnteredPortfolio(true)
+      return
+    }
+
+    setIsEnteringPortfolio(true)
+    transitionTimeoutRef.current = window.setTimeout(() => {
+      setHasEnteredPortfolio(true)
+      setIsEnteringPortfolio(false)
+      window.scrollTo({ top: 0, behavior: 'auto' })
+    }, 2250)
+  }
+
   return (
     <>
+    {!hasEnteredPortfolio && (
+      <IntroGateway
+        isEntering={isEnteringPortfolio}
+        onEnter={enterPortfolio}
+        onOpenChat={() => document.dispatchEvent(new Event('portfolio-chat-open'))}
+      />
+    )}
+    {hasEnteredPortfolio && (
     <div className="site-shell min-h-screen">
       <header className="site-header">
         <a className="brand" href="#home" aria-label="Ridho Alif Utama, ke beranda" onClick={closeMenu}>
@@ -750,6 +848,7 @@ function App() {
         </div>
       </footer>
     </div>
+    )}
     <PortfolioChat />
     </>
   )
