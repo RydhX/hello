@@ -24,8 +24,8 @@ function OpportunityChart() {
       <AreaChart data={chartData} margin={{ top: 12, right: 12, left: 0, bottom: 4 }}>
         <defs>
           <linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#ff6500" stopOpacity={0.3} />
-            <stop offset="100%" stopColor="#ff6500" stopOpacity={0} />
+            <stop offset="0%" stopColor="#9c93e8" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="#9c93e8" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid stroke="#ffffff" strokeOpacity={0.08} vertical={false} />
@@ -35,7 +35,7 @@ function OpportunityChart() {
           contentStyle={{ background: '#292929', border: '1px solid #555555', borderRadius: 8, color: '#f0f0f0', fontSize: 11 }}
           labelStyle={{ color: '#c5c5c5' }}
         />
-        <Area type="monotone" dataKey="score" stroke="#ff7900" strokeWidth={2} fill="url(#chartFill)" />
+        <Area type="monotone" dataKey="score" stroke="#b7adff" strokeWidth={2} fill="url(#chartFill)" />
       </AreaChart>
     </ResponsiveContainer>
   )

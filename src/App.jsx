@@ -1,4 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
   ArrowDown,
   ArrowDownRight,
@@ -29,7 +31,10 @@ import emailIcon from './assets/card/icon_email.svg'
 import linkedInLogo from './assets/card/logo_linkedin_logo.svg'
 import './App.css'
 
+gsap.registerPlugin(ScrollTrigger)
+
 const OpportunityChart = lazy(() => import('./OpportunityChart.jsx'))
+const SpatialCanvas = lazy(() => import('./SpatialCanvas.jsx'))
 const currentYear = new Date().getFullYear()
 const publicBase = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
@@ -65,6 +70,16 @@ const projects = [
     variant: 'heat',
     url: 'https://lnkd.in/p/djUW-s7B',
   },
+]
+
+const journeySections = [
+  { id: 'home', label: 'Beranda', layer: 'ORIGIN / 00' },
+  { id: 'tentang', label: 'Profil', layer: 'CONTEXT / 01' },
+  { id: 'proyek', label: 'Proyek', layer: 'PROJECTS / 02' },
+  { id: 'atlas', label: 'Atlas', layer: 'TERRAIN / 03' },
+  { id: 'pengalaman', label: 'Pengalaman', layer: 'FIELD NOTES / 04' },
+  { id: 'keahlian', label: 'Keahlian', layer: 'TOOLKIT / 05' },
+  { id: 'kontak', label: 'Kontak', layer: 'DESTINATION / 06' },
 ]
 
 const experiences = [
@@ -173,14 +188,161 @@ const capabilities = [
 
 function SectionHeading({ eyebrow, title, note }) {
   return (
-    <div className="section-heading">
+    <div className="section-heading" data-reveal>
       <div>
         <p className="eyebrow">{eyebrow}</p>
-        <h2>{title}</h2>
+        <h2 data-word-reveal>{title}</h2>
+        <span className="section-transition-line" aria-hidden="true" />
       </div>
       {note && <p className="section-note">{note}</p>}
     </div>
   )
+}
+
+function splitHeadingIntoWords(heading) {
+  const originalMarkup = heading.innerHTML
+  const originalLabel = heading.getAttribute('aria-label')
+  const text = heading.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+  const walker = document.createTreeWalker(heading, NodeFilter.SHOW_TEXT)
+  const textNodes = []
+
+  while (walker.nextNode()) textNodes.push(walker.currentNode)
+
+  for (const textNode of textNodes) {
+    const fragment = document.createDocumentFragment()
+
+    for (const token of textNode.textContent.match(/\S+|\s+/g) ?? []) {
+      if (/^\s+$/.test(token)) {
+        fragment.append(document.createTextNode(token))
+        continue
+      }
+
+      const word = document.createElement('span')
+      word.className = 'motion-word'
+      word.setAttribute('aria-hidden', 'true')
+      word.textContent = token
+      fragment.append(word)
+    }
+
+    textNode.replaceWith(fragment)
+  }
+
+  heading.setAttribute('aria-label', text)
+
+  return () => {
+    heading.innerHTML = originalMarkup
+    if (originalLabel === null) heading.removeAttribute('aria-label')
+    else heading.setAttribute('aria-label', originalLabel)
+  }
+}
+
+function DisciplineMarquee() {
+  const disciplines = [
+    'Geospatial analysis',
+    'Remote sensing',
+    'Spatial intelligence',
+    'Cartography',
+    'Data meets design',
+  ]
+
+  return (
+    <section
+      className="discipline-marquee"
+      aria-label="Fokus keahlian"
+      data-cinematic-section
+    >
+      <span className="section-seam" aria-hidden="true" />
+      <p className="marquee-label">CARA SAYA MEMBACA DUNIA</p>
+      <div className="marquee-track">
+        {[0, 1].map((copy) => (
+          <div className="marquee-group" key={copy} aria-hidden={copy === 1}>
+            {disciplines.map((discipline) => (
+              <span className="marquee-item" key={discipline}>
+                {discipline}
+                <i aria-hidden="true">✳</i>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function SpatialAtlas() {
+  return (
+    <section
+      className="spatial-atlas"
+      id="atlas"
+      aria-labelledby="spatial-atlas-title"
+      data-reveal
+      data-cinematic-section
+    >
+      <span className="section-seam" aria-hidden="true" />
+      <div className="spatial-atlas-copy">
+        <p className="eyebrow">RUANG ADALAH DATA</p>
+        <h2 id="spatial-atlas-title" data-word-reveal>
+          Setiap titik<br />punya{' '}
+          <span
+            className="heading-image-mask"
+            style={{ '--heading-mask-image': `url("${publicBase}posters/uhi-yogyakarta.jpg")` }}
+          >
+            perspektif.
+          </span>
+        </h2>
+        <p>
+          Dari citra satelit hingga skala lingkungan, konteks mengubah cara kita membaca sebuah tempat.
+          Saya menghubungkan lapisan-lapisan itu menjadi cerita yang bisa digunakan.
+        </p>
+        <a className="atlas-link" href="#keahlian">
+          Lihat cara saya bekerja <ArrowUpRight size={16} />
+        </a>
+      </div>
+      <div className="atlas-visual" aria-hidden="true">
+        <div className="atlas-orbit atlas-orbit-one" />
+        <div className="atlas-orbit atlas-orbit-two" />
+        <div className="atlas-orbit atlas-orbit-three" />
+        <div className="atlas-globe">
+          <span className="atlas-grid-line atlas-grid-line-a" />
+          <span className="atlas-grid-line atlas-grid-line-b" />
+          <span className="atlas-grid-line atlas-grid-line-c" />
+          <span className="atlas-grid-line atlas-grid-line-d" />
+          <span className="atlas-signal atlas-signal-one" />
+          <span className="atlas-signal atlas-signal-two" />
+          <span className="atlas-signal atlas-signal-three" />
+          <span className="atlas-globe-core" />
+        </div>
+        <span className="atlas-coordinate atlas-coordinate-one">6°12′ S</span>
+        <span className="atlas-coordinate atlas-coordinate-two">106°48′ E</span>
+        <span className="atlas-stamp">SPATIAL<br />SYSTEM / 01</span>
+      </div>
+    </section>
+  )
+}
+
+function handleProjectPointerMove(event) {
+  if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  const card = event.currentTarget
+  const bounds = card.getBoundingClientRect()
+  if (!bounds.width || !bounds.height) return
+
+  const x = (event.clientX - bounds.left) / bounds.width
+  const y = (event.clientY - bounds.top) / bounds.height
+  const maxTilt = 5
+
+  card.style.setProperty('--tilt-x', `${(0.5 - y) * maxTilt}deg`)
+  card.style.setProperty('--tilt-y', `${(x - 0.5) * maxTilt}deg`)
+  card.style.setProperty('--glare-x', `${x * 100}%`)
+  card.style.setProperty('--glare-y', `${y * 100}%`)
+  card.classList.add('is-tilting')
+}
+
+function resetProjectTilt(event) {
+  const card = event.currentTarget
+  card.style.setProperty('--tilt-x', '0deg')
+  card.style.setProperty('--tilt-y', '0deg')
+  card.classList.remove('is-tilting')
 }
 
 function MapIllustration() {
@@ -205,7 +367,7 @@ function MapIllustration() {
           />
         </pattern>
         <linearGradient id="map-wash" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0" stopColor="#ff6500" stopOpacity=".42" />
+          <stop offset="0" stopColor="#9c93e8" stopOpacity=".42" />
           <stop offset="1" stopColor="#b8b8b8" stopOpacity=".08" />
         </linearGradient>
       </defs>
@@ -213,7 +375,7 @@ function MapIllustration() {
       <path
         d="M93 39 158 26l42 19 43-6 28 24 60-4 42 28-14 40 22 37-29 31 8 40-45 21-38-11-40 24-37-15-28 15-37-26-52-6 9-44-21-26 20-38-15-40 29-19z"
         fill="url(#map-wash)"
-        stroke="#ff7900"
+        stroke="#9c93e8"
         strokeOpacity=".65"
         strokeWidth="1.5"
       />
@@ -224,15 +386,15 @@ function MapIllustration() {
       <path d="M68 113c57 21 91-25 143-2s88 46 154 12" fill="none" stroke="#929292" strokeOpacity=".35" strokeWidth="1" />
       <path d="M73 221c48-35 93 9 139-22s99-37 153-9" fill="none" stroke="#929292" strokeOpacity=".3" strokeWidth="1" />
       <path d="M149 49c-2 57 29 92 14 150s18 75 13 111M249 53c15 42-7 80 20 119s-1 75 11 124M339 86c-23 41-9 68-30 105s8 62-2 98" fill="none" stroke="#929292" strokeOpacity=".24" strokeWidth="1" />
-      <path d="M127 218c60-80 95 39 151-38s84-17 127-77" fill="none" stroke="#ff7900" strokeDasharray="4 6" strokeWidth="2" />
+      <path d="M127 218c60-80 95 39 151-38s84-17 127-77" fill="none" stroke="#d9ff87" strokeDasharray="4 6" strokeWidth="2" />
       {[
         [127, 218],
         [278, 180],
         [405, 103],
       ].map(([cx, cy], index) => (
         <g key={cx}>
-          <circle cx={cx} cy={cy} r="12" fill="#ff7900" fillOpacity=".16" />
-          <circle cx={cx} cy={cy} r="4" fill="#ff7900" />
+          <circle cx={cx} cy={cy} r="12" fill="#9c93e8" fillOpacity=".22" />
+          <circle cx={cx} cy={cy} r="4" fill="#d9ff87" />
           <text x={cx + 11} y={cy - 10} fill="#e2e2e2" fontSize="9" fontFamily="monospace">
             0{index + 1}
           </text>
@@ -265,6 +427,142 @@ function ProjectVisual({ variant }) {
         loading="lazy"
         decoding="async"
       />
+      <div className={`project-spatial-layer project-spatial-layer--${variant}`} aria-hidden="true">
+        <svg viewBox="0 0 520 340" preserveAspectRatio="none">
+          <path className="project-layer-grid" d="M0 68H520M0 136H520M0 204H520M0 272H520M104 0V340M208 0V340M312 0V340M416 0V340" />
+          <path className="project-layer-route" d="M52 252C132 230 133 127 224 162S323 250 466 75" />
+          {(variant === 'coffee'
+            ? [[52, 252, 'A'], [224, 162, 'B'], [466, 75, 'C']]
+            : [[91, 214, 'LST'], [258, 133, 'NDVI'], [425, 226, 'NDBI']]
+          ).map(([cx, cy, label]) => (
+            <g className="project-layer-marker" key={label}>
+              <circle cx={cx} cy={cy} r="13" />
+              <circle cx={cx} cy={cy} r="3" />
+              <text x={cx + 16} y={cy - 8}>{label}</text>
+            </g>
+          ))}
+        </svg>
+        <span className="project-layer-stamp">
+          <i />
+          {variant === 'coffee' ? 'SITE SELECTION / MCDA' : 'THERMAL LAYERS / UHI'}
+        </span>
+        <span className="project-layer-coordinate">
+          {variant === 'coffee' ? 'JAKARTA SELATAN · 06°15′ S' : 'YOGYAKARTA · 07°47′ S'}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function SpatialRoute() {
+  const [activeSection, setActiveSection] = useState('home')
+
+  useEffect(() => {
+    const sections = journeySections
+      .map(({ id }) => document.getElementById(id))
+      .filter(Boolean)
+
+    const observer = new IntersectionObserver((entries) => {
+      const visibleSections = entries.filter((entry) => entry.isIntersecting)
+      if (!visibleSections.length) return
+
+      visibleSections.sort((first, second) =>
+        Math.abs(first.boundingClientRect.top) - Math.abs(second.boundingClientRect.top),
+      )
+      setActiveSection(visibleSections[0].target.id)
+    }, {
+      rootMargin: '-30% 0px -45% 0px',
+      threshold: [0, 0.1, 0.3],
+    })
+
+    sections.forEach((section) => observer.observe(section))
+    return () => observer.disconnect()
+  }, [])
+
+  const activeLayer = journeySections.find(({ id }) => id === activeSection)?.layer
+
+  return (
+    <nav className="spatial-route" aria-label="Rute perjalanan portfolio">
+      <span className="spatial-route-readout" aria-live="polite">
+        <span>ACTIVE LAYER</span>
+        <strong>{activeLayer}</strong>
+      </span>
+      <div className="spatial-route-track">
+        <svg viewBox="0 0 40 400" preserveAspectRatio="none" aria-hidden="true">
+          <path className="spatial-route-base" d="M20 4C20 52 6 55 20 86S34 121 20 153 6 187 20 220 34 254 20 286 6 323 20 396" />
+          <path
+            className="spatial-route-active"
+            d="M20 4C20 52 6 55 20 86S34 121 20 153 6 187 20 220 34 254 20 286 6 323 20 396"
+            style={{
+              strokeDasharray: '620',
+              strokeDashoffset: `${620 * (1 - (journeySections.findIndex(({ id }) => id === activeSection) + 1) / journeySections.length)}`,
+            }}
+          />
+        </svg>
+        {journeySections.map(({ id, label }, index) => (
+          <a
+            className={`spatial-route-stop${activeSection === id ? ' is-active' : ''}`}
+            href={`#${id}`}
+            key={id}
+            style={{ top: `${(index / (journeySections.length - 1)) * 100}%` }}
+            aria-label={`Ke ${label}`}
+            aria-current={activeSection === id ? 'location' : undefined}
+          >
+            <span className="spatial-route-index">0{index}</span>
+            <span className="spatial-route-label">{label}</span>
+          </a>
+        ))}
+      </div>
+    </nav>
+  )
+}
+
+function SpatialScanner() {
+  const scannerRef = useRef(null)
+  const readoutRef = useRef(null)
+
+  useEffect(() => {
+    const finePointer = window.matchMedia('(pointer: fine)')
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (!finePointer.matches || reducedMotion.matches) return undefined
+
+    const scanner = scannerRef.current
+    if (!scanner) return undefined
+    let frame = 0
+    let pointerX = 0
+    let pointerY = 0
+
+    const updateScanner = () => {
+      scanner.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0)`
+      if (readoutRef.current) {
+        const x = Math.round((pointerX / window.innerWidth) * 100)
+        const y = Math.round((pointerY / window.innerHeight) * 100)
+        readoutRef.current.textContent = `SCAN / ${String(x).padStart(2, '0')}:${String(y).padStart(2, '0')}`
+      }
+      frame = 0
+    }
+
+    const handlePointerMove = (event) => {
+      pointerX = event.clientX
+      pointerY = event.clientY
+      scanner.classList.add('is-visible')
+      if (!frame) frame = window.requestAnimationFrame(updateScanner)
+    }
+    const hideScanner = () => scanner.classList.remove('is-visible')
+
+    window.addEventListener('pointermove', handlePointerMove, { passive: true })
+    document.addEventListener('pointerleave', hideScanner)
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      document.removeEventListener('pointerleave', hideScanner)
+      window.cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  return (
+    <div className="spatial-scanner" ref={scannerRef} aria-hidden="true">
+      <span className="spatial-scanner-crosshair" />
+      <span className="spatial-scanner-readout" ref={readoutRef}>SCAN / --:--</span>
     </div>
   )
 }
@@ -548,7 +846,7 @@ function IntroGateway({ isEntering, onEnter, onOpenChat }) {
           </section>
           <div className="intro-card-actions">
             <button type="button" className="intro-card-enter" onClick={onEnter} disabled={isEntering}>
-              {isEntering ? 'Opening portfolio…' : 'Get in Touch'}
+              {isEntering ? 'Opening portfolio…' : 'Explore portfolio'}
             </button>
             <button
               type="button"
@@ -574,10 +872,265 @@ function App() {
   const [hasEnteredPortfolio, setHasEnteredPortfolio] = useState(false)
   const [isEnteringPortfolio, setIsEnteringPortfolio] = useState(false)
   const transitionTimeoutRef = useRef(null)
+  const portfolioRef = useRef(null)
 
   const closeMenu = () => setMenuOpen(false)
 
   useEffect(() => () => window.clearTimeout(transitionTimeoutRef.current), [])
+
+  useEffect(() => {
+    if (!hasEnteredPortfolio || !portfolioRef.current) return undefined
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+
+    const restoreSplitHeadings = []
+    const context = gsap.context(() => {
+      const headings = gsap.utils.toArray('[data-word-reveal]')
+      headings.forEach((heading) => {
+        restoreSplitHeadings.push(splitHeadingIntoWords(heading))
+      })
+
+      gsap.utils.toArray('[data-reveal]').forEach((element) => {
+        const words = element.querySelectorAll('.motion-word')
+        if (words.length) {
+          gsap.fromTo(
+            words,
+            { yPercent: 115, rotate: 2, autoAlpha: 0 },
+            {
+              yPercent: 0,
+              rotate: 0,
+              autoAlpha: 1,
+              duration: 0.9,
+              stagger: 0.035,
+              ease: 'power4.out',
+              scrollTrigger: {
+                trigger: element,
+                start: 'top 86%',
+                once: true,
+              },
+            },
+          )
+          const companionTargets = [...new Set([
+            ...element.children,
+            ...element.querySelectorAll(
+              '.eyebrow, .section-note, .hero-overline, .hero-description, .hero-actions, .hero-meta, .intro-body, .spatial-atlas-copy > p:not(.eyebrow)',
+            ),
+          ])].filter((target) => !target.querySelector('.motion-word'))
+
+          if (companionTargets.length) {
+            gsap.fromTo(
+              companionTargets,
+              { autoAlpha: 0, y: 18 },
+              {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.7,
+                stagger: 0.09,
+                ease: 'power3.out',
+                scrollTrigger: {
+                  trigger: element,
+                  start: 'top 86%',
+                  once: true,
+                },
+              },
+            )
+          }
+        } else {
+          gsap.fromTo(
+            element,
+            { autoAlpha: 0, y: 28 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.85,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: element,
+                start: 'top 88%',
+                once: true,
+              },
+            },
+          )
+        }
+      })
+
+      gsap.fromTo(
+        '.hero-wordmark',
+        { yPercent: 0, scale: 1 },
+        {
+          yPercent: 32,
+          scale: 1.12,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.hero-section',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        },
+      )
+
+      gsap.fromTo(
+        '.hero-art',
+        { y: 0 },
+        {
+          y: 78,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.hero-section',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1.2,
+          },
+        },
+      )
+
+      gsap.utils.toArray('.project-card').forEach((card, index) => {
+        const image = card.querySelector('.project-poster')
+        if (image) {
+          gsap.fromTo(
+            image,
+            { clipPath: 'inset(9% 7% 9% 7%)', scale: 1.12 },
+            {
+              clipPath: 'inset(0% 0% 0% 0%)',
+              scale: 1,
+              duration: 1.15,
+              delay: index * 0.1,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 84%',
+                once: true,
+              },
+            },
+          )
+        }
+      })
+
+      gsap.utils.toArray('.experience-item').forEach((item, index) => {
+        gsap.fromTo(
+          item,
+          { autoAlpha: 0, x: -24 },
+          {
+            autoAlpha: 1,
+            x: 0,
+            duration: 0.65,
+            delay: (index % 3) * 0.08,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: item,
+              start: 'top 91%',
+              once: true,
+            },
+          },
+        )
+      })
+
+      gsap.fromTo(
+        '.skills-grid .skill-card',
+        { autoAlpha: 0, y: 34, rotateX: -5, transformOrigin: '50% 100%' },
+        {
+          autoAlpha: 1,
+          y: 0,
+          rotateX: 0,
+          duration: 0.75,
+          stagger: 0.12,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.skills-grid',
+            start: 'top 84%',
+            once: true,
+          },
+        },
+      )
+
+      gsap.fromTo(
+        '.atlas-globe',
+        { rotate: -13, scale: 0.88 },
+        {
+          rotate: 0,
+          scale: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.spatial-atlas',
+            start: 'top bottom',
+            end: 'center center',
+            scrub: 1,
+          },
+        },
+      )
+
+      gsap.utils.toArray('[data-cinematic-section]').forEach((section, index) => {
+        if (index === 0) return
+
+        const seam = section.querySelector('.section-seam')
+        const direction = index % 2 === 0 ? 1 : -1
+
+        if (seam) {
+          gsap.fromTo(
+            seam,
+            {
+              scaleX: 0.08,
+              autoAlpha: 0.3,
+              transformOrigin: direction > 0 ? 'left center' : 'right center',
+            },
+            {
+              scaleX: 1,
+              autoAlpha: 1,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: section,
+                start: 'top 92%',
+                end: 'top 46%',
+                scrub: 0.7,
+              },
+            },
+          )
+        }
+      })
+
+      gsap.utils.toArray('.section-heading').forEach((heading) => {
+        const line = heading.querySelector('.section-transition-line')
+        if (!line) return
+
+        gsap.fromTo(
+          line,
+          { scaleX: 0, transformOrigin: 'left center' },
+          {
+            scaleX: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: heading,
+              start: 'top 84%',
+              once: true,
+            },
+          },
+        )
+      })
+
+      gsap.fromTo(
+        '.page-scroll-progress',
+        { scaleX: 0 },
+        {
+          scaleX: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: portfolioRef.current,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0.25,
+          },
+        },
+      )
+
+      window.requestAnimationFrame(() => ScrollTrigger.refresh())
+    }, portfolioRef)
+
+    return () => {
+      context.revert()
+      restoreSplitHeadings.forEach((restoreHeading) => restoreHeading())
+    }
+  }, [hasEnteredPortfolio])
 
   const enterPortfolio = () => {
     if (isEnteringPortfolio) return
@@ -597,6 +1150,9 @@ function App() {
 
   return (
     <>
+    <Suspense fallback={null}>
+      <SpatialCanvas />
+    </Suspense>
     {!hasEnteredPortfolio && (
       <IntroGateway
         isEntering={isEnteringPortfolio}
@@ -605,7 +1161,10 @@ function App() {
       />
     )}
     {hasEnteredPortfolio && (
-    <div className="site-shell min-h-screen">
+    <div className="site-shell min-h-screen" ref={portfolioRef}>
+      <div className="page-scroll-progress" aria-hidden="true" />
+      <SpatialRoute />
+      <SpatialScanner />
       <header className="site-header">
         <a className="brand" href="#home" aria-label="Ridho Alif Utama, ke beranda" onClick={closeMenu}>
           <span>ridho<span className="brand-dot">.</span></span>
@@ -631,9 +1190,16 @@ function App() {
       </header>
 
       <main>
-        <section className="hero-section" id="home">
-          <div className="hero-copy">
-            <h1>
+        <section
+          className="hero-section"
+          id="home"
+          data-cinematic-section
+        >
+          <span className="section-seam" aria-hidden="true" />
+          <span className="hero-wordmark" aria-hidden="true">RIDHO</span>
+          <div className="hero-copy" data-reveal>
+            <span className="hero-overline"><i /> GIS · DATA · VISUAL STORYTELLING</span>
+            <h1 data-word-reveal>
               Peta yang baik
               <br />
               membuat kita
@@ -658,7 +1224,7 @@ function App() {
             </div>
           </div>
 
-          <div className="hero-art">
+          <div className="hero-art" data-reveal>
             <div className="orbit orbit-one" />
             <div className="orbit orbit-two" />
             <div className="dashboard-card">
@@ -700,14 +1266,21 @@ function App() {
           </a>
         </section>
 
-        <section className="intro-section content-section" id="tentang">
+        <DisciplineMarquee />
+
+        <section
+          className="intro-section content-section"
+          id="tentang"
+          data-cinematic-section
+        >
+          <span className="section-seam" aria-hidden="true" />
           <div className="intro-kicker">
             <span className="section-index">01 / PROFIL</span>
             <span className="kicker-line" />
             <span>DATA MEETS DESIGN</span>
           </div>
-          <div className="intro-grid">
-            <h2>Ruang, data,<br />dan <span>perspektif baru.</span></h2>
+          <div className="intro-grid" data-reveal>
+            <h2 data-word-reveal>Ruang, data,<br />dan <span>perspektif baru.</span></h2>
             <div className="intro-body">
               <p>
                 Berangkat dari Geografi dan Pemetaan di <strong>Universitas Gadjah Mada</strong>, saya tertarik pada satu pertanyaan: bagaimana data yang kompleks bisa bercerita dengan sederhana?
@@ -718,7 +1291,7 @@ function App() {
               <a className="inline-link" href="#pengalaman">Kenali perjalanan saya <ArrowDownRight size={15} /></a>
             </div>
           </div>
-          <div className="stats-row">
+          <div className="stats-row" data-reveal>
             <div className="stat-item">
               <strong>GIS<span>.</span></strong>
               <span>Fokus studi · UGM</span>
@@ -738,13 +1311,18 @@ function App() {
           </div>
         </section>
 
-        <section className="projects-section content-section" id="proyek">
+        <section
+          className="projects-section content-section"
+          id="proyek"
+          data-cinematic-section
+        >
+          <span className="section-seam" aria-hidden="true" />
           <SectionHeading
             eyebrow="02 / PILIHAN KARYA"
             title={<>Dari koordinat<br />menjadi <span>kemungkinan.</span></>}
             note="Dua eksplorasi yang mempertemukan analisis, konteks, dan cara bercerita melalui peta."
           />
-          <div className="project-grid">
+          <div className="project-grid" data-reveal>
             {projects.map((project) => (
               <a
                 className="project-card project-card-link"
@@ -753,6 +1331,8 @@ function App() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Buka proyek ${project.title} di tab baru`}
+                onPointerMove={handleProjectPointerMove}
+                onPointerLeave={resetProjectTilt}
               >
                 <ProjectVisual variant={project.variant} />
                 <div className="project-details">
@@ -779,14 +1359,21 @@ function App() {
           </p>
         </section>
 
-        <section className="experience-section" id="pengalaman">
+        <SpatialAtlas />
+
+        <section
+          className="experience-section"
+          id="pengalaman"
+          data-cinematic-section
+        >
+          <span className="section-seam" aria-hidden="true" />
           <div className="content-section experience-inner">
             <SectionHeading
               eyebrow="03 / PENGALAMAN"
               title={<>Belajar dengan<br /><span>mengerjakan.</span></>}
               note="Perspektif lintas industri membentuk cara saya memahami masalah dan bekerja bersama orang lain."
             />
-            <div className="experience-list">
+            <div className="experience-list" data-reveal>
               {experiences.map((item, index) => (
                 <article className="experience-item" key={`${item.organization}-${item.role}`}>
                   <div className="experience-period">
@@ -821,7 +1408,12 @@ function App() {
           </div>
         </section>
 
-        <section className="skills-section content-section" id="keahlian">
+        <section
+          className="skills-section content-section"
+          id="keahlian"
+          data-cinematic-section
+        >
+          <span className="section-seam" aria-hidden="true" />
           <SectionHeading
             eyebrow="04 / KEAHLIAN"
             title={<>Satu toolkit,<br /><span>banyak sudut pandang.</span></>}
@@ -838,7 +1430,7 @@ function App() {
               </article>
             ))}
           </div>
-          <div className="skills-language">
+          <div className="skills-language" data-reveal>
             <span>TOOLS I REACH FOR</span>
             <div>
               {['QGIS', 'ArcGIS Engine', 'MapLibre', 'Python', 'Photoshop', 'Illustrator', 'Microsoft Office'].map((tool) => (
@@ -846,12 +1438,13 @@ function App() {
               ))}
             </div>
           </div>
-          <div className="language-row">
+          <div className="language-row" data-reveal>
             <span>LANGUAGES</span>
             <p><strong>Bahasa Indonesia</strong> · Native <i /> <strong>English</strong> · Professional</p>
           </div>
           <a
             className="publication-card"
+            data-reveal
             href="https://doi.org/10.13140/RG.2.2.30434.24006"
             target="_blank"
             rel="noreferrer"
@@ -866,12 +1459,17 @@ function App() {
           </a>
         </section>
 
-        <section className="contact-section">
+        <section
+          className="contact-section"
+          id="kontak"
+          data-cinematic-section
+        >
+          <span className="section-seam" aria-hidden="true" />
           <div className="contact-orbit orbit-a" />
           <div className="contact-orbit orbit-b" />
-          <div className="contact-content">
+          <div className="contact-content" data-reveal>
             <span className="contact-eyebrow"><span className="availability-dot" /> OPEN TO MEANINGFUL COLLABORATION</span>
-            <h2>Ada ide yang<br /><span>ingin dipetakan?</span></h2>
+            <h2 data-word-reveal>Ada ide yang<br /><span>ingin dipetakan?</span></h2>
             <p>Mari ngobrol tentang geospasial, desain, atau proyek berikutnya.</p>
             <a className="button button-lime" href="mailto:rydhxx@gmail.com">
               Kirim email <ArrowUpRight size={16} />
