@@ -2,9 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
-  ArrowDown,
   ArrowDownRight,
-  ArrowRight,
   ArrowUpRight,
   AtSign,
   BarChart3,
@@ -33,7 +31,6 @@ import './App.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const OpportunityChart = lazy(() => import('./OpportunityChart.jsx'))
 const SpatialCanvas = lazy(() => import('./SpatialCanvas.jsx'))
 const currentYear = new Date().getFullYear()
 const publicBase = import.meta.env.BASE_URL.endsWith('/')
@@ -252,7 +249,6 @@ function DisciplineMarquee() {
       data-cinematic-section
     >
       <span className="section-seam" aria-hidden="true" />
-      <p className="marquee-label">CARA SAYA MEMBACA DUNIA</p>
       <div className="marquee-track">
         {[0, 1].map((copy) => (
           <div className="marquee-group" key={copy} aria-hidden={copy === 1}>
@@ -283,12 +279,7 @@ function SpatialAtlas() {
         <p className="eyebrow">RUANG ADALAH DATA</p>
         <h2 id="spatial-atlas-title" data-word-reveal>
           Setiap titik<br />punya{' '}
-          <span
-            className="heading-image-mask"
-            style={{ '--heading-mask-image': `url("${publicBase}posters/uhi-yogyakarta.jpg")` }}
-          >
-            perspektif.
-          </span>
+          <span>perspektif.</span>
         </h2>
         <p>
           Dari citra satelit hingga skala lingkungan, konteks mengubah cara kita membaca sebuah tempat.
@@ -345,68 +336,6 @@ function resetProjectTilt(event) {
   card.classList.remove('is-tilting')
 }
 
-function MapIllustration() {
-  return (
-    <svg
-      className="map-illustration"
-      viewBox="0 0 520 340"
-      role="img"
-      aria-label="Ilustrasi peta analisis spasial berbentuk heksagon"
-    >
-      <defs>
-        <pattern id="map-grid" width="30" height="30" patternUnits="userSpaceOnUse">
-          <path d="M30 0H0V30" fill="none" stroke="#bdbdbd" strokeOpacity=".12" />
-        </pattern>
-        <pattern id="hex-pattern" width="48" height="42" patternUnits="userSpaceOnUse">
-          <path
-            d="M12 1 24 8v14l-12 7L0 22V8zM36 22l12 7v14l-12 7-12-7V29z"
-            fill="none"
-            stroke="#a9a9a9"
-            strokeOpacity=".2"
-            strokeWidth="1"
-          />
-        </pattern>
-        <linearGradient id="map-wash" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0" stopColor="#9c93e8" stopOpacity=".42" />
-          <stop offset="1" stopColor="#b8b8b8" stopOpacity=".08" />
-        </linearGradient>
-      </defs>
-      <rect width="520" height="340" fill="url(#map-grid)" />
-      <path
-        d="M93 39 158 26l42 19 43-6 28 24 60-4 42 28-14 40 22 37-29 31 8 40-45 21-38-11-40 24-37-15-28 15-37-26-52-6 9-44-21-26 20-38-15-40 29-19z"
-        fill="url(#map-wash)"
-        stroke="#9c93e8"
-        strokeOpacity=".65"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M93 39 158 26l42 19 43-6 28 24 60-4 42 28-14 40 22 37-29 31 8 40-45 21-38-11-40 24-37-15-28 15-37-26-52-6 9-44-21-26 20-38-15-40 29-19z"
-        fill="url(#hex-pattern)"
-      />
-      <path d="M68 113c57 21 91-25 143-2s88 46 154 12" fill="none" stroke="#929292" strokeOpacity=".35" strokeWidth="1" />
-      <path d="M73 221c48-35 93 9 139-22s99-37 153-9" fill="none" stroke="#929292" strokeOpacity=".3" strokeWidth="1" />
-      <path d="M149 49c-2 57 29 92 14 150s18 75 13 111M249 53c15 42-7 80 20 119s-1 75 11 124M339 86c-23 41-9 68-30 105s8 62-2 98" fill="none" stroke="#929292" strokeOpacity=".24" strokeWidth="1" />
-      <path d="M127 218c60-80 95 39 151-38s84-17 127-77" fill="none" stroke="#d9ff87" strokeDasharray="4 6" strokeWidth="2" />
-      {[
-        [127, 218],
-        [278, 180],
-        [405, 103],
-      ].map(([cx, cy], index) => (
-        <g key={cx}>
-          <circle cx={cx} cy={cy} r="12" fill="#9c93e8" fillOpacity=".22" />
-          <circle cx={cx} cy={cy} r="4" fill="#d9ff87" />
-          <text x={cx + 11} y={cy - 10} fill="#e2e2e2" fontSize="9" fontFamily="monospace">
-            0{index + 1}
-          </text>
-        </g>
-      ))}
-      <text x="18" y="24" fill="#a5a5a5" fontSize="9" letterSpacing="2" fontFamily="monospace">
-        SPATIAL LAYER / JAKARTA SELATAN
-      </text>
-    </svg>
-  )
-}
-
 function ProjectVisual({ variant }) {
   const poster = variant === 'coffee'
     ? {
@@ -454,72 +383,8 @@ function ProjectVisual({ variant }) {
   )
 }
 
-function SpatialRoute() {
-  const [activeSection, setActiveSection] = useState('home')
-
-  useEffect(() => {
-    const sections = journeySections
-      .map(({ id }) => document.getElementById(id))
-      .filter(Boolean)
-
-    const observer = new IntersectionObserver((entries) => {
-      const visibleSections = entries.filter((entry) => entry.isIntersecting)
-      if (!visibleSections.length) return
-
-      visibleSections.sort((first, second) =>
-        Math.abs(first.boundingClientRect.top) - Math.abs(second.boundingClientRect.top),
-      )
-      setActiveSection(visibleSections[0].target.id)
-    }, {
-      rootMargin: '-30% 0px -45% 0px',
-      threshold: [0, 0.1, 0.3],
-    })
-
-    sections.forEach((section) => observer.observe(section))
-    return () => observer.disconnect()
-  }, [])
-
-  const activeLayer = journeySections.find(({ id }) => id === activeSection)?.layer
-
-  return (
-    <nav className="spatial-route" aria-label="Rute perjalanan portfolio">
-      <span className="spatial-route-readout" aria-live="polite">
-        <span>ACTIVE LAYER</span>
-        <strong>{activeLayer}</strong>
-      </span>
-      <div className="spatial-route-track">
-        <svg viewBox="0 0 40 400" preserveAspectRatio="none" aria-hidden="true">
-          <path className="spatial-route-base" d="M20 4C20 52 6 55 20 86S34 121 20 153 6 187 20 220 34 254 20 286 6 323 20 396" />
-          <path
-            className="spatial-route-active"
-            d="M20 4C20 52 6 55 20 86S34 121 20 153 6 187 20 220 34 254 20 286 6 323 20 396"
-            style={{
-              strokeDasharray: '620',
-              strokeDashoffset: `${620 * (1 - (journeySections.findIndex(({ id }) => id === activeSection) + 1) / journeySections.length)}`,
-            }}
-          />
-        </svg>
-        {journeySections.map(({ id, label }, index) => (
-          <a
-            className={`spatial-route-stop${activeSection === id ? ' is-active' : ''}`}
-            href={`#${id}`}
-            key={id}
-            style={{ top: `${(index / (journeySections.length - 1)) * 100}%` }}
-            aria-label={`Ke ${label}`}
-            aria-current={activeSection === id ? 'location' : undefined}
-          >
-            <span className="spatial-route-index">0{index}</span>
-            <span className="spatial-route-label">{label}</span>
-          </a>
-        ))}
-      </div>
-    </nav>
-  )
-}
-
 function SpatialScanner() {
   const scannerRef = useRef(null)
-  const readoutRef = useRef(null)
 
   useEffect(() => {
     const finePointer = window.matchMedia('(pointer: fine)')
@@ -534,11 +399,6 @@ function SpatialScanner() {
 
     const updateScanner = () => {
       scanner.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0)`
-      if (readoutRef.current) {
-        const x = Math.round((pointerX / window.innerWidth) * 100)
-        const y = Math.round((pointerY / window.innerHeight) * 100)
-        readoutRef.current.textContent = `SCAN / ${String(x).padStart(2, '0')}:${String(y).padStart(2, '0')}`
-      }
       frame = 0
     }
 
@@ -562,7 +422,6 @@ function SpatialScanner() {
   return (
     <div className="spatial-scanner" ref={scannerRef} aria-hidden="true">
       <span className="spatial-scanner-crosshair" />
-      <span className="spatial-scanner-readout" ref={readoutRef}>SCAN / --:--</span>
     </div>
   )
 }
@@ -718,7 +577,7 @@ function PortfolioChat() {
             {isSending && (
               <div className="portfolio-chat-row portfolio-chat-row--assistant">
                 <p className="portfolio-chat-bubble portfolio-chat-loading">
-                  <LoaderCircle size={18} />
+                  <LoaderCircle className="portfolio-chat-spinner" size={18} />
                   Menyiapkan jawaban...
                 </p>
               </div>
@@ -746,9 +605,12 @@ function PortfolioChat() {
             <button
               type="submit"
               aria-label="Kirim pesan"
+              aria-busy={isSending}
               disabled={isSending || !input.trim()}
             >
-              {isSending ? <LoaderCircle size={20} /> : <Send size={20} />}
+              {isSending
+                ? <LoaderCircle className="portfolio-chat-spinner" size={20} />
+                : <Send size={20} />}
             </button>
           </form>
         </section>
@@ -867,10 +729,94 @@ function IntroGateway({ isEntering, onEnter, onOpenChat }) {
   )
 }
 
+function HeroVideoBackground() {
+  const backdropRef = useRef(null)
+  const videoRef = useRef(null)
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
+  const [shouldPlayVideo, setShouldPlayVideo] = useState(false)
+  const [videoFailed, setVideoFailed] = useState(false)
+  const [videoReady, setVideoReady] = useState(false)
+
+  useEffect(() => {
+    const backdrop = backdropRef.current
+    if (!backdrop) return undefined
+
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const mobileViewport = window.matchMedia('(max-width: 760px)')
+    let isNearViewport = false
+
+    const updateVideoEligibility = () => {
+      const isEligible = !motionPreference.matches && !mobileViewport.matches
+      if (isEligible && isNearViewport) setShouldLoadVideo(true)
+      if (!isEligible) setShouldLoadVideo(false)
+      setShouldPlayVideo(isEligible && isNearViewport)
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      isNearViewport = entry.isIntersecting
+      updateVideoEligibility()
+    })
+
+    observer.observe(backdrop)
+    motionPreference.addEventListener('change', updateVideoEligibility)
+    mobileViewport.addEventListener('change', updateVideoEligibility)
+
+    return () => {
+      observer.disconnect()
+      motionPreference.removeEventListener('change', updateVideoEligibility)
+      mobileViewport.removeEventListener('change', updateVideoEligibility)
+    }
+  }, [])
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    if (!shouldPlayVideo) {
+      video.pause()
+      return
+    }
+
+    video.play().catch((error) => {
+      if (error.name !== 'AbortError') setVideoFailed(true)
+    })
+  }, [shouldLoadVideo, shouldPlayVideo])
+
+  return (
+    <div
+      className={`hero-video-backdrop${videoReady ? ' is-ready' : ''}`}
+      ref={backdropRef}
+      aria-hidden="true"
+    >
+      <img
+        className="hero-video-poster"
+        src={`${publicBase}media/hero-background-poster.webp`}
+        alt=""
+        fetchPriority="high"
+        decoding="async"
+      />
+      {shouldLoadVideo && !videoFailed && (
+        <video
+          className="hero-background-video"
+          ref={videoRef}
+          src={`${publicBase}media/hero-background.mp4`}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="none"
+          onCanPlay={() => setVideoReady(true)}
+          onError={() => setVideoFailed(true)}
+        />
+      )}
+    </div>
+  )
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [hasEnteredPortfolio, setHasEnteredPortfolio] = useState(false)
   const [isEnteringPortfolio, setIsEnteringPortfolio] = useState(false)
+  const [isHeaderCompact, setIsHeaderCompact] = useState(false)
+  const [activeSection, setActiveSection] = useState('home')
   const transitionTimeoutRef = useRef(null)
   const portfolioRef = useRef(null)
 
@@ -879,12 +825,51 @@ function App() {
   useEffect(() => () => window.clearTimeout(transitionTimeoutRef.current), [])
 
   useEffect(() => {
+    if (!hasEnteredPortfolio) return undefined
+
+    let frame = 0
+    const sections = journeySections
+      .map(({ id }) => document.getElementById(id))
+      .filter(Boolean)
+    const updateHeader = () => {
+      setIsHeaderCompact((compact) => {
+        const nextCompact = window.scrollY > 48
+        return compact === nextCompact ? compact : nextCompact
+      })
+      const readingLine = window.innerHeight * 0.36
+      const active = sections.reduce(
+        (current, section) => (section.getBoundingClientRect().top <= readingLine ? section : current),
+        sections[0],
+      )
+      if (active) setActiveSection(active.id)
+      frame = 0
+    }
+    const handleScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateHeader)
+    }
+
+    updateHeader()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.cancelAnimationFrame(frame)
+    }
+  }, [hasEnteredPortfolio])
+
+  useEffect(() => {
     if (!hasEnteredPortfolio || !portfolioRef.current) return undefined
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
 
     const restoreSplitHeadings = []
     const context = gsap.context(() => {
-      const headings = gsap.utils.toArray('[data-word-reveal]')
+      gsap.fromTo(
+        '.site-header',
+        { y: -18 },
+        { y: 0, duration: 0.75, ease: 'power3.out' },
+      )
+
+    const headings = gsap.utils.toArray('[data-word-reveal]')
       headings.forEach((heading) => {
         restoreSplitHeadings.push(splitHeadingIntoWords(heading))
       })
@@ -953,36 +938,23 @@ function App() {
         }
       })
 
-      gsap.fromTo(
-        '.hero-wordmark',
-        { yPercent: 0, scale: 1 },
-        {
-          yPercent: 32,
-          scale: 1.12,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '.hero-section',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1,
+      gsap.utils.toArray('.education-strip, .leadership-strip').forEach((element) => {
+        gsap.fromTo(
+          element,
+          { y: 24, autoAlpha: 0 },
+          {
+            y: 0,
+            autoAlpha: 1,
+            duration: 0.7,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: element,
+              start: 'top 88%',
+              once: true,
+            },
           },
-        },
-      )
-
-      gsap.fromTo(
-        '.hero-art',
-        { y: 0 },
-        {
-          y: 78,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '.hero-section',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.2,
-          },
-        },
-      )
+        )
+      })
 
       gsap.utils.toArray('.project-card').forEach((card, index) => {
         const image = card.querySelector('.project-poster')
@@ -1163,9 +1135,8 @@ function App() {
     {hasEnteredPortfolio && (
     <div className="site-shell min-h-screen" ref={portfolioRef}>
       <div className="page-scroll-progress" aria-hidden="true" />
-      <SpatialRoute />
       <SpatialScanner />
-      <header className="site-header">
+      <header className={`site-header${isHeaderCompact ? ' is-compact' : ''}`}>
         <a className="brand" href="#home" aria-label="Ridho Alif Utama, ke beranda" onClick={closeMenu}>
           <span>ridho<span className="brand-dot">.</span></span>
         </a>
@@ -1179,10 +1150,10 @@ function App() {
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
         <nav className={`main-nav ${menuOpen ? 'is-open' : ''}`} aria-label="Navigasi utama">
-          <a href="#tentang" onClick={closeMenu}>Tentang</a>
-          <a href="#proyek" onClick={closeMenu}>Proyek</a>
-          <a href="#pengalaman" onClick={closeMenu}>Pengalaman</a>
-          <a href="#keahlian" onClick={closeMenu}>Keahlian</a>
+          <a href="#tentang" aria-current={activeSection === 'tentang' ? 'location' : undefined} onClick={closeMenu}>Tentang</a>
+          <a href="#proyek" aria-current={activeSection === 'proyek' ? 'location' : undefined} onClick={closeMenu}>Proyek</a>
+          <a href="#pengalaman" aria-current={activeSection === 'pengalaman' ? 'location' : undefined} onClick={closeMenu}>Pengalaman</a>
+          <a href="#keahlian" aria-current={activeSection === 'keahlian' ? 'location' : undefined} onClick={closeMenu}>Keahlian</a>
           <a className="nav-contact" href="mailto:rydhxx@gmail.com" onClick={closeMenu}>
             Mari terhubung <ArrowUpRight size={14} />
           </a>
@@ -1195,10 +1166,9 @@ function App() {
           id="home"
           data-cinematic-section
         >
+          <HeroVideoBackground />
           <span className="section-seam" aria-hidden="true" />
-          <span className="hero-wordmark" aria-hidden="true">RIDHO</span>
           <div className="hero-copy" data-reveal>
-            <span className="hero-overline"><i /> GIS · DATA · VISUAL STORYTELLING</span>
             <h1 data-word-reveal>
               Peta yang baik
               <br />
@@ -1211,59 +1181,10 @@ function App() {
             </p>
             <div className="hero-actions">
               <a className="button button-dark" href="#proyek">
-                Jelajahi karya <ArrowRight size={16} />
-              </a>
-              <a className="text-link" href="mailto:rydhxx@gmail.com">
-                Hubungi saya <ArrowUpRight size={15} />
+                Jelajahi karya
               </a>
             </div>
-            <div className="hero-meta">
-              <span><MapPin size={14} /> Jakarta, Indonesia</span>
-              <span className="meta-divider" />
-              <span>Universitas Gadjah Mada</span>
-            </div>
           </div>
-
-          <div className="hero-art" data-reveal>
-            <div className="orbit orbit-one" />
-            <div className="orbit orbit-two" />
-            <div className="dashboard-card">
-              <div className="dashboard-header">
-                <div className="dashboard-title">
-                  <span className="dashboard-icon"><Compass size={15} /></span>
-                  <div>
-                    <strong>Spatial intelligence</strong>
-                    <span>CONCEPT VISUALIZATION</span>
-                  </div>
-                </div>
-                <span className="dashboard-menu">•••</span>
-              </div>
-              <div className="dashboard-map">
-                <MapIllustration />
-                <span className="map-coordinate coordinate-a">6°12&apos; S</span>
-                <span className="map-coordinate coordinate-b">106°48&apos; E</span>
-              </div>
-              <div className="dashboard-chart-head">
-                <div>
-                  <span>OPPORTUNITY INDEX</span>
-                  <strong>Analisis lokasi <i>↗</i></strong>
-                </div>
-                <span className="chart-period">AREA 01—07</span>
-              </div>
-              <div className="chart-wrap">
-                <Suspense fallback={<div className="chart-loading" aria-label="Memuat visualisasi" />}>
-                  <OpportunityChart />
-                </Suspense>
-              </div>
-              <div className="chart-footnote">
-                <span><i className="legend-dot lime" /> Skor relatif</span>
-                <span>Ilustrasi, bukan data aktual</span>
-              </div>
-            </div>
-          </div>
-          <a className="scroll-cue" href="#tentang" aria-label="Gulir ke bagian tentang saya">
-            <ArrowDown size={15} /> <span>SCROLL TO EXPLORE</span>
-          </a>
         </section>
 
         <DisciplineMarquee />
@@ -1353,10 +1274,6 @@ function App() {
               </a>
             ))}
           </div>
-          <p className="project-footnote">
-            <span className="footnote-mark">↗</span>
-            Poster menampilkan visualisasi dari proyek analisis spasial saya.
-          </p>
         </section>
 
         <SpatialAtlas />
@@ -1373,21 +1290,39 @@ function App() {
               title={<>Belajar dengan<br /><span>mengerjakan.</span></>}
               note="Perspektif lintas industri membentuk cara saya memahami masalah dan bekerja bersama orang lain."
             />
-            <div className="experience-list" data-reveal>
-              {experiences.map((item, index) => (
-                <article className="experience-item" key={`${item.organization}-${item.role}`}>
-                  <div className="experience-period">
-                    {item.current && <span className="current-dot" />}
-                    {item.period}
-                  </div>
-                  <div className="experience-main">
-                    <span className="experience-role">{item.role}</span>
-                    <h3>{item.organization}</h3>
-                    <p>{item.description}</p>
-                  </div>
-                  <span className="experience-index">{String(index + 1).padStart(2, '0')}</span>
-                </article>
-              ))}
+            <div
+              className="experience-timeline"
+              data-reveal
+              role="region"
+              aria-label="Linimasa pengalaman kerja, geser horizontal untuk melihat semuanya"
+              tabIndex={0}
+            >
+              <svg className="experience-route" viewBox="0 0 2080 560" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M160 240H1884Q1920 240 1920 276V284Q1920 320 1884 320H512" />
+              </svg>
+              <div className="experience-list">
+                {experiences.map((item, index) => (
+                  <article
+                    className={`experience-item${item.current ? ' is-current' : ''}`}
+                    key={`${item.organization}-${item.role}`}
+                    style={{
+                      gridRow: index < 6 ? 1 : 2,
+                      gridColumn: index < 6 ? index + 1 : 12 - index,
+                    }}
+                  >
+                    <div className="experience-period">
+                      {item.current && <span className="current-dot" />}
+                      {item.period}
+                    </div>
+                    <span className="experience-index">{String(index + 1).padStart(2, '0')}</span>
+                    <div className="experience-main">
+                      <span className="experience-role">{item.role}</span>
+                      <h3>{item.organization}</h3>
+                      <p>{item.description}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
             <div className="education-strip">
               <div className="education-icon"><Compass size={18} /></div>

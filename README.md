@@ -20,6 +20,8 @@ npm run lint
 
 Visualisasi grafik dan peta pada halaman ini adalah ilustrasi konsep, bukan data hasil analisis proyek.
 
+Background video hero menggunakan `public/media/hero-background.mp4` dengan poster `public/media/hero-background-poster.webp`. Video dikompres dan hanya dimuat saat hero terlihat di desktop; perangkat mobile dan pengaturan reduced motion menggunakan poster statis.
+
 ## Deploy ke GitHub Pages
 
 Workflow `.github/workflows/deploy.yml` membangun dan menerbitkan situs ke GitHub Pages setiap kali ada push ke branch `main` atau `master`, atau saat workflow dijalankan manual. Di pengaturan repository, aktifkan Pages dengan **GitHub Actions** sebagai deployment source.
